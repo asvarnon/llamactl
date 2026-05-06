@@ -8,6 +8,10 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(name = "llamactl", about = "llama.cpp model manager", version)]
 struct Cli {
+    /// Path to the configuration file
+    #[arg(short, long, global = true)]
+    config: Option<std::path::PathBuf>,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -40,14 +44,14 @@ fn main() {
 
 fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
     match cli.command {
-        Commands::Start { name } => commands::start::run(&name),
+        Commands::Start { name } => commands::start::run(&name, cli.config.as_deref()),
         Commands::Stop => commands::stop::run(),
         Commands::Status => {
             commands::status::run();
             Ok(())
         }
         Commands::List => {
-            let config = config::load_config()?;
+            let config = config::load_config(cli.config.as_deref())?;
             commands::list::run(&config);
             Ok(())
         }
@@ -55,7 +59,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
             let name = args
                 .first()
                 .ok_or("usage: llm <name> or llm <subcommand>")?;
-            commands::start::run(name)
+            commands::start::run(name, cli.config.as_deref())
         }
     }
 }
