@@ -1,0 +1,12 @@
+[package]
+name = "llamactl"
+version = "0.1.0"
+edition = "2021"
+description = "llama.cpp model manager for Windows"
+
+[dependencies]
+clap       = { version = "4", features = ["derive"] }
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml       = "1"
+ureq       = "3"
