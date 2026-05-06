@@ -1,0 +1,10 @@
+[[models]]
+name    = "31b-q3km"
+aliases = ["31b"]
+script  = 'C:\llama.cpp\scripts\llm1.bat'
+
+[[models]]
+name    = "31b-q4km"
+aliases = ["31b-q4"]
+script  = 'C:\llama.cpp\scripts\llm2.bat'
+

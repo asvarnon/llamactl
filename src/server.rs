@@ -4,6 +4,7 @@ use std::time::Duration;
 const HEALTH_URL: &str = "http://127.0.0.1:8080/health";
 
 static AGENT: LazyLock<ureq::Agent> = LazyLock::new(|| {
+    // Agent is what is running/managing the process from inside even if cmd window was closed.
     ureq::Agent::config_builder()
         .timeout_global(Some(Duration::from_secs(2)))
         .build()

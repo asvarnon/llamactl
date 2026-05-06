@@ -54,6 +54,7 @@ pub fn format_elapsed(started_at: u64) -> String {
     }
 }
 
+// checks for signal (PID) existence
 pub fn pid_alive(pid: u32) -> bool {
     let output = std::process::Command::new("tasklist")
         .args(["/FI", &format!("PID eq {}", pid), "/NH", "/FO", "CSV"])

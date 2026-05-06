@@ -8,13 +8,14 @@ pub struct Config {
 
 #[derive(Deserialize)]
 pub struct ModelEntry {
-    pub name: String,
+    pub name: String, // in double quotes.
     #[serde(default)]
     pub aliases: Vec<String>,
-    pub script: String,
+    pub script: String, //in single quotes
 }
 
 fn config_path() -> PathBuf {
+    // toml file with loaded configs
     PathBuf::from(r"C:\llama.cpp\llm-config.toml")
 }
 
