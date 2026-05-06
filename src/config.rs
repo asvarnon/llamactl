@@ -1,5 +1,6 @@
 use serde::Deserialize;
-use std::path::PathBuf;
+use std::env;
+use std::path::{Path, PathBuf};
 
 #[derive(Deserialize)]
 pub struct Config {
@@ -14,20 +15,28 @@ pub struct ModelEntry {
     pub script: String, //in single quotes
 }
 
-fn config_path() -> PathBuf {
-    // toml file with loaded configs
-    PathBuf::from(r"C:\llama.cpp\llm-config.toml")
-}
+pub fn load_config(custom_path: Option<&Path>) -> Result<Config, Box<dyn std::error::Error>> {
+    // Configuration Hierarchy:
+    // 1. Explicit path provided via CLI argument
+    // 2. Environment variable LLM_CONFIG_PATH
+    // 3. Local file 'llm-config.toml' in the current working directory
 
-pub fn load_config() -> Result<Config, Box<dyn std::error::Error>> {
-    let path = config_path();
+    let path = if let Some(p) = custom_path {
+        p.to_path_buf()
+    } else if let Ok(env_path) = env::var("LLM_CONFIG_PATH") {
+        PathBuf::from(env_path)
+    } else {
+        PathBuf::from("llm-config.toml")
+    };
+
     if !path.exists() {
         return Err(format!(
-            "config file not found at {} — create it to register models",
+            "config file not found at {} — please specify it using --config or LLM_CONFIG_PATH",
             path.display()
         )
         .into());
     }
+
     let contents = std::fs::read_to_string(&path)?;
     let config: Config = toml::from_str(&contents)?;
     Ok(config)

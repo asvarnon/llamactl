@@ -11,8 +11,11 @@ pub fn log_path() -> std::path::PathBuf {
     std::env::temp_dir().join("llama-server.log")
 }
 
-pub fn run(name: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let config = load_config()?; //get list of models, alias', and scripts
+pub fn run(
+    name: &str,
+    config_path: Option<&std::path::Path>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let config = load_config(config_path.as_deref())?; //get list of models, alias', and scripts
 
     let model = resolve_model(&config, name).ok_or_else(|| {
         format!(
@@ -40,8 +43,8 @@ pub fn run(name: &str) -> Result<(), Box<dyn std::error::Error>> {
         .creation_flags(CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW)
         .spawn()?;
 
-    // Note: This PID refers to the 'cmd.exe' batch runner, not the actual 'llama-server.exe' 
-    // process inside the script. To target the server directly by PID, we would need 
+    // Note: This PID refers to the 'cmd.exe' batch runner, not the actual 'llama-server.exe'
+    // process inside the script. To target the server directly by PID, we would need
     // to trace the process tree to find the child of this shell.
     let pid = child.id();
 
